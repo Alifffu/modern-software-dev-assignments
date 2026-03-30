@@ -1,11 +1,14 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
+
+
+NonEmptyStr = constr(strip_whitespace=True, min_length=1)
 
 
 class NoteCreate(BaseModel):
-    title: str
-    content: str
+    title: NonEmptyStr
+    content: NonEmptyStr
 
 
 class NoteRead(BaseModel):
@@ -20,12 +23,12 @@ class NoteRead(BaseModel):
 
 
 class NotePatch(BaseModel):
-    title: str | None = None
-    content: str | None = None
+    title: NonEmptyStr | None = None
+    content: NonEmptyStr | None = None
 
 
 class ActionItemCreate(BaseModel):
-    description: str
+    description: NonEmptyStr
 
 
 class ActionItemRead(BaseModel):
@@ -40,7 +43,7 @@ class ActionItemRead(BaseModel):
 
 
 class ActionItemPatch(BaseModel):
-    description: str | None = None
+    description: NonEmptyStr | None = None
     completed: bool | None = None
 
 
