@@ -12,6 +12,24 @@ def test_create_and_list_categories(client):
     assert any(item["name"] == "Work" for item in categories)
 
 
+def test_categories_pagination_and_sorting(client):
+    for name in ["Beta", "Alpha", "Gamma"]:
+        r = client.post("/categories/", json={"name": name})
+        assert r.status_code == 201, r.text
+
+    r = client.get("/categories/", params={"sort": "name"})
+    assert r.status_code == 200
+    assert [item["name"] for item in r.json()] == ["Alpha", "Beta", "Gamma"]
+
+    r = client.get("/categories/", params={"sort": "-name"})
+    assert r.status_code == 200
+    assert [item["name"] for item in r.json()] == ["Gamma", "Beta", "Alpha"]
+
+    r = client.get("/categories/", params={"sort": "name", "skip": 1, "limit": 1})
+    assert r.status_code == 200
+    assert [item["name"] for item in r.json()] == ["Beta"]
+
+
 def test_create_note_with_category(client):
     category = client.post("/categories/", json={"name": "Personal"}).json()
 
